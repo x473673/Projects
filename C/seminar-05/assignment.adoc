@@ -1,0 +1,214 @@
+---
+title: "Cvičení 5: Reťazce, 2. časť"
+layout: "seminar"
+author: "Peter Stanko"
+author-email: "stanko@mail.muni.cz"
+publish: 1
+---
+
+= Cvičenie 5: Reťazce, 2. časť
+
+Toto cvičenie má za úlohu precvičiť prácu s viacrozmernými poliami a funkčnými ukazateľmi.
+
+== Úloha 1. Práca s maticami
+
+V tejto úlohe si precvičíte prácu s dvojrozmerným poľom. 
+Vašou úlohou bude implementovať niekoľko jednoduchých funkcii, aby ste si ukázali, 
+ako môžete k maticiam pristupovať.
+
+=== Zadanie úlohy 1
+
+Naimplementujte funkciu `matrixRowInfo`, ktorá prejde všetky hodnoty uložené 
+v matici celých čísel (*int*) a do druhej matice zapíše pre každý riadok minimum a maximum.
+
+Prvý argument je počet riadkov matice, druhý je počet stĺpcov, 
+tretí je samotná matica, štvrtý je výsledná matica minmaxov. 
+Minimum je prvý prvok a maximum druhý.
+
+[source,c]
+----
+void matrixRowInfo(int mrows, int mcols, int matrix[mrows][mcols], int result[mrows][2]);
+----
+
+Naimplementujte funkciu `matrixStringInfo`, ktorá prejde pole reťazcov (matica znakov) 
+a spočíta pre každý reťazec jeho dĺžku, tú uloží do poľa dĺžok a vráti ukazaťeľ na najdlhší [.underline]#reťazec#.
+Pre zjednodušenie môžete počítať s tým, že najdlhší reťazec nebude mať viac ako 255 znakov.
+
+[source,c]
+----
+char *matrixStringInfo(const int mrows, char matrix[mrows][256], int result[mrows]);
+----
+ 
+
+== Úloha 2. Split
+
+V druhej úlohe si vyskúšate implementovať funkciu, 
+ktorá rozdelí reťazec na podreťazce a tie uloží do poľa. 
+Delenie prebehne na základe deliaceho znaku.
+
+=== Zadanie úlohy 2
+
+Naimplementujte funkciu `stringSplit`, ktorá rozdelí reťazec na základe deliaceho
+znaku na podreťazce. 
+Funkcia bude obmedzená tým, že maximálna veľkosť podreťazca bude 255 znakov 
+a maximálny počet podreťazcov bude 50.
+
+Argumenty funkcie:
+. pôvodný reťazec
+. pole podreťazcov, kam zapíšte výsledky
+. počet nájdených podreťazcov, ktorý zapíše táto funkcia 
+. znak, podľa ktorého dôjde k rozdeleniu pôvodného reťazca
+
+Deliaci znak sa vo výslednej matici nachádzať __nebude__.
+
+[source,c]
+----
+void stringSplit(const char *string, char result[50][256], int *size, char delim);
+----
+
+Všimnite si, že maximálna dĺžka reťazca je 255 znakov a v matici deklarujeme 256.
+Zamyslite sa, prečo to tak je.
+
+== Úloha 3. String map
+
+Niekedy sa určite stretnete s tým, že chcete nejakým spôsobom spracovať každý prvok poľa. 
+Následne takto spracovaný prvok uložiť do poľa nového na to isté miesto ako pôvodný prvok. 
+Príkladom môže byť prevedenie reťazca na reťazec s veľkými písmenami. 
+V tejto úlohe si vyskúšate implementovať univerzálnu funkciu *string map*.
+
+=== Zadanie úlohy 3
+
+Funkcii `stringMap` bude ako prvý argument predané pole, nad ktorým sa bude aplikovať. 
+Ako druhý argument vezme `void *` ukazaťeľ, do ktorého bude vložený výsledok. 
+Tretím argumentom bude transformačná funkcia.
+
+[source,c]
+----
+void stringMap(const char *string, void *result, void (*func)(void *, int, const char));
+----
+
+Funkcia prejde pole znakov a každý znak s jeho príslušným indexom predá transformačnej funkcii. 
+
+Transformačná funkcia vezme ako svoj prvý argument výsledok (result), 
+ako druhý vezme pozíciu (index), na ktorej sa predávaný znak nachádza a 
+tretí argument bude konkrétny znak. 
+
+*Príklad transformačnej funkcie:*
+[source,c]
+----
+/*
+ * Function will transfrom all the lowercase characters in the input string
+ * to the upper case letters.
+ */
+void transformUp(void *out, int i, const char ch)
+{
+    char *result = (char *) out;
+    result[i] = toupper(ch);
+}
+
+
+/* 
+ * Function will count how many case insensitive 'A' are in the string.
+ * We did not use the index (i), we do not have to use all the input parametes.
+ */
+void countLetterA(void *out, int i, const char ch)
+{
+   if (tolower(ch) == 'a') {
+      *((int *) out) += 1;
+   }
+   
+}
+----
+
+Skúste si implementovať vlastnú transformačnú funkciu, ktorá spočíta počet písmen v reťazci.
+
+== Bonusy
+
+=== Bonus 1. Better split
+
+V tejto úlohe budete znova implementovať funkciu `split`, 
+avšak tentokrát nebudete výsledok ukladať do matice pevnej veľkosti. 
+Vstupom bude reťazec, ktorý budete deliť na podreťazce a znak, podľa ktorého budete deliť.
+Výstupom bude jednorozmerné pole znakov, ktoré sa bude správať ako _buffer_. 
+Druhým výstupom bude pole ukazateľov na reťazce, ktoré budú ukazovať do tohoto bufferu. 
+
+=== Zadanie bonusu
+
+Naimplementujte funkciu `stringSplit2`, ktorá ako svoj prvý argument zoberie reťazec, 
+ako svoj druhý argument zoberie buffer, ktorý by mal mať rovnakú veľkosť ako pôvodný reťazec. 
+Tretím argumentom bude deliaci znak, ako 4. argument funkcia vezme pole, 
+ktoré musí byť veľké minimálne počet podreťazcov + 1. 
+Počet podreťazcov môžete zistiť tak, že si spočítate, koľko krát sa deliaci znak nachádza v pôvodnom reťazci + 1. 
+Pre zjednodušenie ale predpokladajte, že nebudete mať viac ako 25 podreťazcov. 
+Pole ukazateľov bude za posledným platným podreťazcom ukončené ukazateľom na `NULL`. 
+Pomocou ktorého bude možné zistiť výslednú veľkosť poľa.
+
+[source,c]
+----
+void stringSplit2(const char *orig, char *buffer, char delim, char *result[26]);
+----
+
+Funkcia bude fungovať nasledovne: aby sme zabránili pozmeneniu pôvodného reťazca, 
+skopírujte obsah pôvodného reťazca do bufferu. 
+Do výsledného poľa ukazateľov uložíte vždy adresu znaku, ktorý nasleduje za deliacim znakom. 
+Ako posledný prvok poľa ukazateľov nadstavíte `NULL`. 
+Všetky výskyty deliaceho znaku v buffery nahradíte nulovým znakom.
+
+---
+
+== Teória
+
+Reťazec je jednorozmerné pole znakov zakončené koncovou nulou (nulovým bytom). 
+Pomocou koncovej nuly sme schopní zistiť dĺžku reťazca. Pozor, toto pre polia vo
+všeobecnosti neplatí. V jazyku C existuje operátor _sizeof_, ktorý vám vráti
+dĺžku staticky alokovaného poľa *krát* veľkosť dátového typu. Vo všeobecnosti
+však nie je možné veľkosť poľa zistiť a jazyk C v sebe nemá zakomponované
+mechanizmy na kontrolu pretečenia (zápis/čítanie mimo poľa). Je to z dôvodu
+rýchlosti a predpokladu, že programátor si to skontroluje sám. Staticky
+alokované viacrozmerné polia sú v pamäti reprezentované ako súvislý, za
+sebou idúci blok, preto k nim je možné pristupovať aj ako k jednorozmerným
+poliam. 
+
+[source,c]
+----
+int matrix[50][30]; // a matrix with 50 rows and 30 columns
+int array[50 * 30]; // an array with size of 1500 elements 
+----
+Obe tieto volania spôsobia alokovanie 1500 * sizeof(int) súvislého pamäťového bloku.
+
+=== Pre staticky alokované dvojrozmerné pole platí:
+[source,c]
+----
+// L - number of columns (number of elements in one row)
+matrix[i][j] == *(matrix + i * L + j); 
+----
+
+=== Ukazatel na polia:
+ 
+[source,c]
+----
+int arr1[10] = { 0 };            // An array of size 10 with all elements set to 0
+int arr2[5] = { 1, 2, 3, 4, 5 }; // Second array with size 5 and elements are 1, 2, 3, 4, 5
+int *base[2] = { arr1, arr2 };   // We store arr1 and arr2 into base, base is an array of pointers to integer
+int **pbase = base;              // pbase is an pointer to a int pointer
+
+// What elemet do we get?
+int x = pbase[1][3];
+
+// There is also an equation:
+pbase[1][3] == *(*(pbase + 1) + 3);
+----
+
+
+=== Spôsoby predávania viacrozmerných statických polí funkciám:
+
+* Ako ukazateľ na pamäť, keďže statické viacrozmerné polia sú v pamäti uložené ako jeden blok idúci za sebou, 
+je možné predať funkcii ukazateľ na začiatok poľa. (Výpočet indexu musí riešiť programátor sám.)
+* Ako viacrozmerné pole s pevne danou dĺžkou. 
+
+
+[source,c]
+----
+void func(int matrix[25][50]); // Function accepts only matrices with size 25 * 50 
+void func2(size_t rows, size_t cols, int matrix[rows][cols]); // available from C99
+----

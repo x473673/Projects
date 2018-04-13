@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Tue Apr 03 23:45:18 CEST 2018:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.1.0 - (1808820): instance a816c00e-0162-8d78-aab0-000003707580 
+on database directory C:\Users\trnka\AppData\Roaming\NetBeans\Derby\pokemonReservationDatabase with class loader sun.misc.Launcher$AppClassLoader@232204a1 
+Loaded from file:/C:/Users/trnka/.m2/repository/org/apache/derby/derby/10.14.1.0/derby-10.14.1.0.jar
+java.vendor=Oracle Corporation
+java.runtime.version=1.8.0_161-b12
+user.dir=C:\Users\trnka\Desktop\PV168-project-pokemon-reservation-master-1517393510384abfd32eef2d65a9acd80e7f7a10\PokemonManager
+os.name=Windows 10
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

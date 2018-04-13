@@ -1,0 +1,356 @@
+---
+title: "Cvičení 7: Spájaný zoznam"
+author: "Roman Lacko"
+author-email: "xlacko1@fi.muni.cz"
+layout: seminar
+publish: now
+---
+
+= Cvičení 7: Spájaný zoznam
+
+Toto je prvá časť z trilógie cvičení zameraných na dátové štruktúry,
+jednotkové testovanie, vstup a výstup. Cieľom tohto
+cvičenia je naimplementovať **obojsmerný spájaný zoznam** (angl.
+__doubly linked list__). Funkčnosť implementácie si overíte priloženými
+jednotkovými testami napísanými v
+https://github.com/spito/testing[testovacom nástroji] od J. Weisera.
+
+== Epizóda 1: The Phantom Node
+
+'''
+
+=== Zadanie
+
+V hlavičke `list.h` sa nachádza deklarácia typov `struct node` a
+`struct list`, ktoré budú tvoriť uzly zoznamu resp. celý zoznam. Okrem
+toho tu nájdete hlavičky funkcií, ktoré naimplementujete v `list.c`,
+spolu s ich dokumentáciou.
+
+Aby nedochádzalo ku zmätkom v implementácii, zjednoznačníme terminológiu
+použitú na tomto cvičení:
+
+**zoznam**::
+inštancia štruktúry `struct list`
+**uzol zoznamu**::
+inštancia štruktúry `struct node`
+**prvok alebo položka zoznamu**::
+hodnota, na ktorú ukazuje atribút `data` štruktúry `node`
+
+[.alert.alert-info]
+icon:info[role="mr-2"] Ak chcete, môžete si k jednotlivým typom vyrobiť
+alias pomocou kľúčového slova `typedef`. Dajte si však pozor na konvencie
+a konflikty s cieľovou platformou.
+
+=== Stručne k teórii
+
+Existuje niekoľko rôznych spôsobov, ako implementovať dvojsmerný spájaný
+zoznam. Na tomto cvičení bude zoznam tvorený uzlami typu `struct node`,
+pričom začiatok a koniec zoznamu bude udržovať štruktúra `struct list`.
+Pospájané uzly vytvárajú štruktúru podobnú tejto (obrázok prevzatý z
+článku https://en.wikipedia.org/wiki/Doubly_linked_list[Doubly linked
+list] na Wikipédii):
+
+image::dllist.svg[Doubly Linked List,role="my-3"]
+
+Štruktúra `struct node` však na rozdiel od obrázka neukladá priamo hodnoty,
+ale _ukazatele_ na beztypovú pamäť (`void*`), ktorú alokuje používateľ
+zoznamu. Takto môžu byť do zoznamu naraz ukladané rôzne typy hodnôt. Aby
+mohli byť prvky uvoľnené korektne s ohľadom na potenciálne rôzne typy
+uložené v zozname, inicializačná funkcia umožní špecifikovať vlastnú
+dealokačnú funkciu (_dealokátor_ alebo _deštruktor_).
+
+=== Vlastnosti zoznamu
+
+Aby nedošlo k chybám z nepozornosti, musia pre každú **korektnú**
+štruktúru `struct list` platiť tieto pravidlá:
+
+. `list\->head == NULL` vtedy a len vtedy, ak `list\->tail == NULL`
+  (ak `head` aj `tail` sú `NULL`, považujeme zoznam za prázdny)`
+. ak má zoznam aspoň jeden uzol, potom `list\->head\->prev == NULL`
+  (tj. prvý prvok nemá predchodcu)
+. ak má zoznam aspoň jeden uzol, potom `list\->tail\->next == NULL`
+  (tj. posledný prvok nemá následníka)
+. ak má uzol `node` následníka v zozname, potom `node\->next\->prev == node`
+. ak má uzol `node` predchodzu v zozname, potom `node\->prev\->next == node`
+
+Všetky operácie okrem `listInitialize` predpokladajú na vstupe zoznam,
+ktorý tieto podmienky splňuje, a operácie tieto vlastnosti musia
+zachovávať.
+
+=== Popis operácií
+
+[.alert.alert-info]
+icon:pencil-alt[role="mr-2"] K tomuto popisu je najlepšie urobiť si obrázok
+počas toho, ako ho čítate.
+
+**Inicializácia**::
+Nový zoznam je inicálne prázdny, takže stačí
+nastaviť `list\->head` a `list\->tail` na `NULL` podľa **1**.
+
+**Vkladanie prvku na koniec**::
+Predpokladajme, že nový uzol zoznamu `node` je alokovaný.
++
+Ak je zoznam prázdny podľa **1**, potom `list\->head` a
+`list\->tail` stačí nastaviť na tento uzol, v opačnom prípade
+nastavíme `node\->prev` a `list\->tail\->next` tak, aby ukazovali
+jeden na druhého podľa **4** a **5**. Následne zmeníme ukazateľ
+`list\->tail` na nový prvok. V každom prípade treba správne nastaviť
+ukazatele v novom uzle tak, aby platilo **2**.
+
+**Výber prvku z konca**::
+Ak má zoznam len jeden prvok, v zozname
+sa nastaví `list\->head` a `list\->tail` na `NULL`. Ak je v
+zozname viac uzlov, potom sa `list\->tail` posunie na predchádzajúci uzol a
+starý uzol sa "odreže" nastavením `list\->tail\->next` na `NULL`. Starý
+uzol sa v každom prípade dealokuje a vráti sa ukazateľ na dáta.
++
+__Vkladanie a výber na začiatku zoznamu funguje analogicky.__
+
+**Zmazanie zoznamu**::
+V podstate stačí v cykle odstraňovať uzly z
+jedného konca až kým sa zoznam nevyprázdni. Uložené dáta je však
+potrebné uvoľniť pomocou dealokačnej funkcie.
+
+=== Testovanie
+
+Svoju implementáciu môžete testovať nastavením týchto cieľov pre cmake:
+
+- `playground07`: vlastný kód v `main.c`
+- `tests07`: jednotkové testy v `tests/tests.c`
+- `bonus_tests07`: testy pre pokročilé operácie so zoznamom
+
+Testy sú napísané tak, aby pri správnej implementácii uvoľňovali všetku
+použitú pamäť. Môžete teda použiť `valgrind` na otestovanie korektnej
+práce s pamäťou.
+
+[.alert.alert-secondary]
+icon:bullseye[role="mr-2"] Pokiaľ nie je pri funkciách explicitne uvedené
+chovanie na `NULL` argumentoch, nie je chovanie v takom prípade definované
+a **netestuje sa**.
+
+=== Ladenie
+
+Ak chcete na cvičení ladiť svoju implementáciu pomocou debuggera,
+zistíte, že debugger ignoruje nastavené body (breakpoints). Je to kvôli tomu,
+že každý test sa spúšťa vo vlastnom podprocese a GDB (debugger) tieto
+podprocesy neskúma.
+
+Na ladenie svojej implementácie teda môžete skúsiť toto:
+
+. prepnite QtCreator do režimu **Debug** v možnostiach, ktoré sú v
+  ľavom dolnom paneli s ikonou počítača; presne tam, kde sa testy prepínajú
+  na `playground`. Toto vypne vytváranie podprocesov, takže testy pôjdu ladiť,
+  ale pri chybnej implementácii prvý test zhodí všetky ostatné. +
+  Neviete to nájsť? Pozrite sa na link:{{ '/tutorials/qt-creator/debug.html' | relative_url }}[prvý obrázok v tutoriáli].
+
+. povoľte GDB v QtCreatori sledovať podprocesy (__toto je experimentálna vlastnosť,
+  nemusí fungovať na Windows a na Linux môže spôsobiť divné správanie__),
+
+  * __Tools__ -> __Options__
+  * na ľavom paneli vyberte __Debugger__
+  * na karte __GDB Extended__ zaškrtnite __Debug all child processes__
+
+. použite `playground` a skúste ladenie na malom kóde
+
+'''
+
+== Úloha 1: Inicializácia
+
+[.alert.alert-info]
+icon:pencil-alt[role="mr-2"] Ak si nie ste istí, ako máte niektorú
+z nasledujúcich operácií implementovať, skúste si urobiť nákres.
+
+Každá dátová štruktúra má nejaký __počiatočný stav__, do ktorého sa musí
+dostať predtým, než sa s ňou začne pracovať. V tomto prípade bude týmto
+stavom __prázdny zoznam__.
+
+Implementujte inicializačnú funkciu:
+
+[source,c]
+----
+void listInitialize(struct list *list, deallocator dealloc);
+----
+
+* požiadavky nájdete v dokumentácii v hlavičkovom súbore `list.h`
+* parameter `dealloc` skopírujte do `list\->dealloc`, a to aj v prípade,
+  že je `NULL`
+
+`deallocator` je typ ukazateľa na funkciu, ktorá berie `void*` a nič nevracia.
+Príkladom funkcie s týmto typom je `free`. Tento atribút sa použije
+až pri uvoľňovaní zoznamu, `listInitialize` túto funkciu nikdy nevolá.
+
+'''
+
+== Úloha 2: Vkladanie prvkov na koniec zoznamu
+
+Keďže zoznam má priamy prístup k svojmu začiatku a koncu, môžeme prvky
+vkladať a vyberať z oboch koncov bez toho, aby sme museli zoznam
+prechádzať celý.
+
+Začneme najprv na konci zoznamu, pre ktorý implementujte nasledujúce
+funkcie:
+
+[source,c]
+----
+bool listPush(struct list *list, void *data);
+----
+
+Funkcia pridá ukazateľ na `data` na koniec zoznamu (pamäť **nekopírujte**,
+pretože neviete jej veľkosť, skopírujte len hodnotu ukazateľa).
+Presnejší popis je v dokumentácii.
+
+Vráti `false` ak sa operácia nepodarí, `true` inak.
+
+'''
+
+== Úloha 3: Veľkosť a test prázdnosti zoznamu
+
+Teraz, keď už vieme do zoznamu pridávať prvky, ukážeme si jednoduché
+funkcie na zisťovanie informácií o zozname, presnejšie, veľkosť zoznamu
+a test prázdnosti:
+
+[source,c]
+----
+size_t listSize(const struct list *list);
+bool listIsEmpty(const struct list *list);
+----
+
+Prvá funkcia vráti počet prvkov v zozname, druhá vráti `false` práve ak
+v zozname existuje aspoň jeden prvok; inak vráti `true`.
+
+[.alert.alert-warning]
+icon:exclamation-triangle[role="mr-2"] **Pozor**, funkcia `listIsEmpty` **nesmie**
+volať `listSize`! +
+//
+Hoci implementácia `listIsEmpty` by bola takto triviálna, jej
+zložitosť by vzrástla z konštantnej na lineárnu. Pritom samozrejme nemá
+zmysel prechádzať celý zoznam.
+
+'''
+
+== Úloha 4: Výber z konca zoznamu
+
+Implementujme opačnú operáciu k vkladaniu prvku na koniec zoznamu:
+
+[source,c]
+----
+void *listPop(struct list *list);
+----
+
+Funkcia zmaže posledný uzol zoznamu a vráti ukazateľ na dáta, ktoré boli
+predané ako parameter `listPush` (alebo `listUnshift`, ktorá bude neskôr).
+Ak je zoznam prázdny, funkcia vráti `NULL` a nič neurobí.
+
+'''
+
+== Úloha 5: Rušenie zoznamu
+
+Ak už nie je dátová štruktúra potrebná, je potrebné ju zrušiť tak, aby
+pritom uvoľnila všetky alokované zdroje.
+
+[source,c]
+void listClear(struct list *list);
+
+V prípade zoznamu to znamená uvoľniť všetky jeho uzly. Kedže však
+obsahujú ukazovatele na prvky, samotné uvoľnenie uzlov nemusí stačiť.
+Naopak, ak máme prvok uložený v dvoch zoznamoch naraz a zoznamy zrušíme,
+pamäť by mal uvoľniť práve jeden z týchto zoznamov.
+
+Tento problém vyriešime funkciou `dealloc`, ktorá sa použije
+na dealokovanie prvkov v zozname. Ak nechceme, aby nejaký zoznam tieto
+prvky uvoľňoval, nastavíme `dealloc` na `NULL`.
+
+Inak povedané: rozhodnutie, ktorý zoznam bude prvky uvoľňovať, necháme
+na programátora používajúceho túto implementáciu. Programátor zároveň
+musí zaručiť, že zoznam uvoľní pamäť prvkov len vtedy, ak už žiadny iný
+zoznam tieto prvky neobsahuje.
+
+== Úloha 6: Vkladanie a výber na začiatku
+
+[source,c]
+----
+bool listUnshift(struct list *list, void *data);
+void *listShift(struct list *list);
+----
+
+Operácie sú analogické ku `listPush` a `listPop`, akurát pracujú nad
+začiatkom zoznamu.
+
+== Bonus: pokročilé operácie nad zoznamom
+
+[.alert.alert-info]
+icon:info[role="mr-2"] Túto časť riešte len vtedy, ak všetky testy
+v základnej časti prechádzajú.
+
+Predchádzajúce operácie úplne stačia na plnohodnotné používanie zoznamu.
+Pri častom používaní by ste však zistili, že niektoré kusy kódu
+pracujúce so zoznamom sa začnú opakovať. Preto implementujte pomocné
+funkcie, ktoré rozšíria operácie nad zoznamom.
+
+V súbore `list_utils.h` sú deklarované funkcie a pomocné typy
+vrátane ich dokumentácie, z ktorej vyčítajte požadované chovanie
+funkcií. Implementáciu píšte do `list_utils.c`. Môžete znova
+používat `playground07` alebo testy, tentokrát v cieli
+`bonus_tests07` (súbor `bonus_tests.c`).
+
+[source,c]
+----
+bool listAny(struct list *list, predicate p);
+bool listAll(struct list *list, predicate p);
+----
+
+Overenie, či aspoň jeden resp. všetky prvky v zozname splňujú predikát `p`.
+Dajte si pozor na to, akú hodnotu vrátiť pre prázdny zoznam.
+
+[source,c]
+----
+bool listInsert(struct list *list, size_t index, void *data);
+void *listGet(struct list *list, size_t index);
+void *listRemove(struct list *list, size_t index);
+----
+
+Vloženie, nájdenie a odstránenie prvkov na zadaných pozíciách v zozname.
+Parameter `index` je v tomto prípade vzdialenosť uzla od hlavy (hlava má
+index `0`). Vkladanie posunie prvok na zadanom indexe **za** vkladaný prvok,
+teda ak zoznam `L ~ [a,c,d]`, tak `listInsert(L, 1, b)` vloží `b` na
+index `1`, čím posunie `c`. Výsledkom bude zoznam `[a,b,c,d]`.
+
+[source,c]
+----
+int listGetIndex(struct list *list, void *data);
+----
+
+Vráti index prvého uzla, ktorý drží zadaný ukazovateľ na dáta.
+
+[source,c]
+----
+void *listFindFirst(struct list *list, predicate p);
+void *listFindLast(struct list *list, predicate p);
+----
+
+Funkcie vrátia prvý resp. posledný **prvok**, ktorý splňuje zadaný predikát,
+Ak taký prvok neexistuje, vrátia `NULL`.
+
+[source,c]
+----
+void listSort(struct list *list, comparator cmp);
+----
+
+Zoradí prvky v zozname podľa porovnávacej funkcie `cmp`.
+Voľba algoritmu je na vás; vzorová implementácia používa **bubble sort**.
+Komparátor má rovnake správanie ako z cvičenia o reťazcoch.
+
+== Príprava na ďalšie cvičenie
+
+Na posledných cvičeniach ste videli jednoduché testovanie, s ktorým
+ste si vystačili na implementáciu zadania cvičení a možno aj domácich
+úloh.
+
+Na ďalšom cvičení sa k jednotkovým testom ešte vrátime, tentokrát však
+budete testy písať sami. Pozrite sa preto, ako sú testy implementované a
+skúste si rozmyslieť odpovede na tieto otázky:
+
+* Prečo si niektoré testy vytvárajú zoznamy "na kolene" a nepoužívajú
+  `listInitialize`, `listPush` alebo `listPop`?
+* Prečo niektoré testy testujú tú istú funkciu viackrát (napr. `listPush`
+  testujú až 4 testy)?

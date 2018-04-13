@@ -1,0 +1,338 @@
+---
+title: "Cvičení 2: Kreslení obrazců"
+layout: "seminar"
+author: Miroslav Jaroš
+author-email: mijaros@mail.muni.cz
+use-mathjax: true
+publish: 1
+---
+
+= Cvičení 2: Kreslení obrazců
+
+V tomto cvičení již začneme programovat v jazyce C.
+
+
+== Připomenutí z minulého cvičení
+
+V minulém cvičení jsme si zkusili vytvoření prvního programu, který
+vypisuje řetězec `Hello World!` na standardní výstup.
+
+[source, c]
+----
+#include <stdio.h>
+
+int main(void) /* Deklarace funkce main, vraci cele cislo, neprijima zadne argumenty */
+{ /* Zacatek bloku */
+
+    printf("Hello World!\n"); /* Volani funkce prinf pro vypis formatovaneho retezce */
+    return 0; /* Ukonceni prubehu funkce a predani navratove hodnoty */
+
+} /* Konec bloku -- telo funkce */
+----
+
+V tomto programu se objevují následující prvky:
+
+* `#include` direktiva preprocesoru, která vám zpřístupní funkce definované v hlavičkovém souboru,
+* `stdio.h`, v němž se nacházejí funkce pro práci se vstupem a výstupem,
+* `int` datový typ definující celé číslo,
+* `main` jméno funkce – v případě jazyka C je nezbytné, aby existovala právě jednou pro každý spustitelný program,
+* `(void)` vstupní argumenty funkce main, v tomto případě žádné nejsou,
+* `{}` složené závorky definují blok, v tomto případě tělo celé funkce main,
+* `printf` volání funkce, která vypisuje na standardní výstup předaný formátovací řetězec a další argumenty,
+* `return` ukončuje průběh funkce a vrátí volajícímu specifikovaný návratový kód,
+  který musí být typu návratové hodnoty funkce. V případě funkce main
+  se návratová hodnota propaguje do volajícího shellu jako návratová hodnota procesu.
+
+== Seznámení s knihovnou
+
+Při programování se budete velmi často setkávat s potřebou sdělit
+uživateli nějakou zprávu, nebo jej požádat o vstup. I v tomto předmětu
+se budeme tomuto problému věnovat, nicméně abychom si mohli již nyní
+napsat rozumný program, připravili jsme pro vás malou knihovnu, která
+vám formou volání funkcí předá uživatelský vstup, aniž byste museli nyní
+rozumět načítání dat.
+
+
+=== Jednotlivé funkce
+
+Zde je popis jednotlivých funkcí včetně jejich deklarací.
+
+==== Načítání čísel
+
+[source,c]
+----
+// Reads int from stdin
+int readInt(void);
+----
+
+* Načítá celé číslo se znaménkem typu `int`.
+
+[source,c]
+----
+// Reads long from stdin
+long readLong(void);
+----
+
+* Načítá celé číslo se znaménkem typu `long`.
+
+[source,c]
+----
+// Reads long long from stdin
+long long readLongLong(void);
+----
+
+* Načítá celé číslo se znaménkem typu `long long`.
+
+[source,c]
+----
+// Reads unsigned int from stdin
+unsigned int readUInt(void);
+----
+
+* Načítá celé číslo bez znaménka typu `unsigned int`.
+
+[source,c]
+----
+// Reads unsigned long from stdin
+unsigned long readULong(void);
+----
+
+* Načítá celé číslo bez znaménka typu `unsigned long`.
+
+[source,c]
+----
+// Reads unsigned long from stdin
+unsigned long long readULongLong(void);
+----
+
+* Načítá celé číslo bez znaménka typu `unsigned long long`.
+
+[source,c]
+----
+// Reads float from stdin
+float readFloat(void);
+----
+
+* Načítá desetinné číslo typu `float`.
+
+[source,c]
+----
+// Reads double from stdin
+double readDouble(void);
+----
+
+* Načítá desetinné číslo typu `double`.
+
+==== Načítání znaků a řetězců
+
+[source,c]
+----
+// Reads char from stdin
+char readChar(void);
+----
+
+* Načte právě jeden znak typu `char`.
+
+[source,c]
+----
+// Reads single word (any white character is delimiter) from stdin`
+char *readWord(void);
+----
+
+* Načte jedno slovo ze vstupu.
+* Slovo je řetězec znaků (pole) oddělené na obou koncích bílým znakem (které se zahazují).
+
+[source,c]
+----
+// Reads single line from stdin (BUFFER_MAX_LEN) is maximum line size
+char *readLine(void);
+----
+
+* Načte celý řádek ze vstupu.
+* Funkce načtítá znaky dokud nenarazí na znak `'\n'`.
+
+[source,c]
+----
+ /**
+  * Reads any characters until new line or End of file signal
+  * @return 1 if EOF and 0 if new line
+  */
+
+int readEndOfLine(void);
+----
+
+* Funkce na „požírání“ zbytku řádku.
+* Zahazuje ze vstupu vše, dokud nenarazí na znak `'\n'`.
+
+
+== Úkol 1. Vykreslení čáry
+
+Od tohoto úkolu dále budeme pracovat v souboru `drawer.c`. Přepněte
+si v QtCreator cíl na `drawer`, který bude spouštět main definovaný
+v `drawer.c`.
+
+Vaším úkolem bude napsat funkci
+
+[source,c]
+----
+// Prints line of specified length
+void drawLine(int length);
+----
+
+Která na standardní výstup vypíše `length` znaků `#`.
+
+* Pomocí cyklu while vypisujte dokud `length != 0` a v každé iteraci snižte `length`.
+* Vypsat znak můžete například pomocí funkce `putchar`, která přijímá právě jeden znak typu `char`.
+* Po vypsání křížků vypíše znak `'\n'`, tedy znak konce řádku.
+
+Tuto funkci zkuste zavolat z funkce main několikrát s různými argumenty.
+Jak se bude funkce chovat, pokud jí předáte záporné číslo?
+
+V případě zacyklení programu je možné v linuxovém terminálu program
+ukončit pomocí kombinace kbd:[Ctrl] + kbd:[C]
+
+== Úkol 2. První vstup
+
+Pokud již máte napsanou funkci `drawLine`, můžeme nyní náš program
+nechat spolupracovat s uživatelem. Vaším úkolem bude upravit funkci
+`main` tak, aby načetla celé číslo ze vstupu a následně toto číslo
+použila jako argument funkce `drawLine`. Protože se jedná o
+uživatelský vstup, je potřeba ošetřit jeho validitu, aby určité vstupy
+nemohly způsobit například pád programu nebo nevalidní výsledek:
+
+* Použijte funkci `readInt` a načtené číslo předejte funkci `drawLine`.
+* Rozšiřte funkci `drawLine` o kontrolu validity vstupu.
+* Použijte konstrukci `if (condition) { commands; }` pro ověření validity.
+* Vstup je nevalidní, pokud je menší než `0`, řádek nulové délky validní je.
+
+Výstup vašeho programu by měl vypadat takto:
+
+[source]
+----
+$ ./drawer
+10
+##########
+----
+
+Kde první řádek specifikuje spuštění programu, druhý načtení čísla a třetí výstup funkce `drawLine`.
+
+== Úkol 3. Výprava do nové dimenze
+
+Vaším úkolem bude vytvořit funkci:
+
+[source,c]
+----
+// Draws a square of size
+void drawSquare(int size);
+----
+
+Tato funkce vykreslí čtverec o velikosti strany `size`.
+
+* Stejně jako v předchozím případě vykreslíme čtverec pomocí znaku `#`.
+* Kvůli velikosti fontu v terminálech, budeme jedno políčko čtverce počítat
+  jako dva znaky. Pokud bychom použili jeden, bude náš čtverec spíše
+  obdélníkového tvaru. Tedy výpis jednoho políčka provedeme jako
+  `putchar('\#'); putchar('#');`.
+* Výsledný obrazec tedy bude mít na každém řádku `2*size` křížků `#` a `size` řádků.
+* Stále platí, že čtverec se zápornou velikostí strany nelze vykreslit.
+* Ve funkci `main` upravte volání z `drawLine` na `drawSquare`.
+* Pro vykreslení čtverce bude vhodné použít cyklus `for`.
+
+Program bude po implementaci vypisovat:
+
+[source]
+----
+$ ./drawer
+5
+##########
+##########
+##########
+##########
+##########
+----
+
+== Úkol 4. Obdélník
+
+Nyní svoji implementaci zobecníme a rozšíříme na kreslení obdélníků.
+
+[source,c]
+----
+// Draws a rectangle of specified sizes with specified characters
+void drawRectangle(int a, int b, char fill);
+----
+
+* Vykreslí obdélník o délkách `a` a `b`.
+* `a` značí délku strany odpovídající řádku.
+* `b` značí délku strany odpovídající sloupci.
+* `fill` je znak, kterým bude obdélník nakreslený.
+* Upravte funkci `main`, tak aby nejdříve načítala dvě čísla a následně načetla jeden znak.
+* Před načtením znaku bude potřeba vyprázdnit z bufferu zalomení řádku pomocí funkce `readEndOfLine`.
+
+Program bude po implementaci vypisovat:
+
+[source]
+----
+$ ./drawer
+5
+3
+$
+$$$$$
+$$$$$
+$$$$$
+----
+
+== Úkol 5. Kruh
+
+Jako poslední část úkolu nyní implementujeme vykreslení kruhu do
+terminálu
+
+[source,c]
+-----------------------------------------------------------------
+// Draws a circle of specified sizes with specified characters
+void drawCircle(int radius, char fill, char space);
+-----------------------------------------------------------------
+
+Protože kruh vám nevyplní místa v rozích, bude potřeba přidat další znak, který označí,
+co je na výsledném obrázku prázdným místem.
+
+* `radius` značí poloměr kruhu.
+* Obrázek tedy bude vysoký `2*radius` řádek.
+* Šířka obrázku bude `4*radius` znaků.
+* Stejně jako u čtverce použijeme jako jedno políčko dva znaky.
+* Při vykreslování musíte vypočítat, zda na dané souřadnici `[x, y]` bude kruh, nebo prázdné místo.
+* Pro připomenutí analytické geometrie: středová rovnice kružnice má tvar
+  +++$(x-x_0)^2 + (y - y_0)^2 = r^2$+++ , kde +++$x_0$+++ a +++$y_0$+++ jsou souřadnicemi středu kružnice.
+* Kruh je množina bodů, jejichž vzdálenost je od obepínající kružnice menší nebo rovna poloměru.
+* Upravte main, tak aby načítal nejdříve jedno číslo potom dva znaky.
+* Stejně jako v případě obdélníku bude potřeba před každým načítáním znaku zavolat funkci readEndOfLine.
+* Protože to, co funkce vykreslí, se může lišit na základě podmínek, zkuste postupně nahrazovat porovnání `<` a `+++<=+++` a nalezněte nejlepší kombinaci, aby váš výtvor vypadal co nejpodobněji kruhu.
+
+Váš program by měl vypsat:
+
+[source]
+----
+$ ./drawer
+10
+#
+^
+^^^^^^^^^^^^^^^^^^^^##^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^##################^^^^^^^^^^^^
+^^^^^^^^##########################^^^^^^^^
+^^^^^^##############################^^^^^^
+^^^^##################################^^^^
+^^^^##################################^^^^
+^^######################################^^
+^^######################################^^
+^^######################################^^
+^^######################################^^
+^^######################################^^
+^^######################################^^
+^^######################################^^
+^^######################################^^
+^^^^##################################^^^^
+^^^^##################################^^^^
+^^^^^^##############################^^^^^^
+^^^^^^^^##########################^^^^^^^^
+^^^^^^^^^^^^##################^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^##^^^^^^^^^^^^^^^^^^^^
+----

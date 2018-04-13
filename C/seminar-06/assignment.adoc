@@ -1,0 +1,127 @@
+---
+title: "Cvičení 6: Reťazce, 3. časť"
+layout: "seminar"
+author: "Peter Stanko"
+author-email: "stanko@mail.muni.cz"
+publish: now
+---
+
+:source-highlighter: prettify
+:source-language: c
+
+= Cvičenie 6: Reťazce, časť 3.
+
+Na tomto cvičení využijete znalosti, ktoré ste nadobudli na predošlých cvičeniach a
+prepíšete niektoré funkcie pomocou dynamickej alokácie.
+
+Pri dynamickej alokácii dochádza k vytvoreniu objektu na *halde* a objekt existuje dovtedy,
+kým ho sami neuvoľníte. Čo má za dôsledok hneď niekoľko vecí.
+
+* O pamäť alokovanú na halde sa musíte starať sami.
+* Veľkosť zásobníku je zvyčajne o dosť menšia, ako veľkosť  haldy.
+
+Dynamická alokácia sa využíva najmä pri dynamických datových
+štruktúrach (zásobník, rad, halda, stromy, spojovaný zoznam, ...),
+pri dynamicky sa meniacej dĺžke poľa, taktiež ak potrebujeme pracovať
+s veľkými kusmi pamäte.
+
+---
+== Úloha 1. Základné funkcie
+Na prvom cvičení ste implementovali funkcie na jednoduchú prácu s reťazcami.
+Avšak vždy ste museli vypočítať veľkosť výstupného bufferu,
+ten ste museli funkcii predať a ona vám ho niečím naplnila.
+V tejto úlohe si tie funkcie trochu vylepšíte, zbavíte sa predávania výstupu
+ako parametra a budete ho vracať pomocou `return`.
+
+=== Zadanie úlohy 1
+V tejto úlohe si znova napíšete niektoré základné funkcie s použitím dynamickej
+alokácie.
+
+Pôjde o tieto funkcie:
+
+[source,c]
+----
+char *dynamicStringCopy(const char *str);
+char *dynamicStringCopyN(const char *str, int length);
+char *dynamicStringJoin(const char *pre, const char *post);
+----
+
+* `dynamicStringCopy` -- vráti kópiu reťazca, avšak nový reťazec sa bude nachádzať na halde
+* `dynamicStringCopyN` -- bude sa správať ako predošlá funkcia,
+  avšak kopírovať bude len do max. veľkosti zadanej v parametri `length`.
+* `dynamicStringJoin` -- funkcia spojí dva reťazce do jedného
+
+== Úloha 2. `readLine`
+
+Určite ste sa už stretli s tým, že ste potrebovali načítať zo štandardného vstupu
+alebo súboru celý riadok. Jazyk C na to má funkcie, ale tie nie sú dostatočne obratné.
+Preto si v tejto úlohe naimplementujete vlastnú funkciu, ktorá zo štandardného vstupu
+načíta celý riadok, bez toho, že by sme nejak obmedzovali veľkosť vstupu.
+
+=== Zadanie úlohy 2
+
+Naimplementujte funkciu `readFullLine`, ktorá načíta zo štandardného vstupu celý riadok.
+
+[source,c]
+----
+char *readFullLine(void);
+----
+
+Funkcia si na začiatku alokuje reťazec ľubovolnej veľkosti.
+Následne načítava jednotlivé znaky, ktoré do reťazca pridáva.
+Pokiaľ by nasledujúci znak spôsobil pretečenie naalokovaného reťazca,
+funkcia si požiada o navýšenie pridelenej pamäte
+pre reťazec pomocou funkcie link:http://www.cplusplus.com/reference/cstdlib/realloc/[`realloc`].
+Tymto spôsobom sa bude zvyšovať veľkosť, pokial sa vám nepodarí úspešne načítať celý reťazec.
+Avšak pozor; to, koľko pamäte ste schopní alokovať záleží od množstva voľnej operačnej pamäte.
+Po načítaní detekcii konca riadku alebo `EOF`, funkcia vráti naalokovaný reťazec.
+
+Pri práci s dynamicky alokovaný poľom alebo reťazcom, platia určité zásady.
+Pri pridávaní prvkov na koniec poľa, v momente keď presiahnete maximálnu alokovanú veľkosť,
+žiadate o realokáciu.
+
+Je zvykom realokovať vždy o vhodný násobok aktuálnej veľkosti poľa (často dvojnásobok).
+**POZOR**, po volaní funkcie `realloc` nad nejakým poľom musíte vždy pracovať s ukazatelom,
+ktorý vám vrátila táto funkcia a nie s tým, ktorý ste jej predali.
+Pri realokácií totiž mohlo dôjsť k premiestneniu dát na iné miesto v pamäti.
+
+Pri zlyhaní funkcie link:http://www.cplusplus.com/reference/cstdlib/realloc/[`realloc`]
+alebo link:http://www.cplusplus.com/reference/cstdlib/malloc/[`malloc`] dôjde k vráteniu
+hodnoty `NULL`.
+V taktom prípade by ste o tom mali užívateľa upozorniť a korektne na to zareagovať.
+K zlyhaniu zväčša dôjde v prípade, že vám operačný systém nemôže alebo nechce prideliť viac pamäte.
+
+== Úloha 3. `join`
+
+Na začiatku cvičenia ste implementovali funkciu `dynamicStringJoin` pre dva reťazce,
+teraz si napíšete všeobecnejšiu funkciu `stringJoinString`, ktorá vezme ako svoj argument _pole_ reťazcov a
+tie spojí.
+
+=== Zadanie úlohy 3
+
+[source,c]
+----
+char *stringJoinString(char **array, size_t size, const char *joinStr);
+----
+
+Prvým argumentom je pole reťazcov, druhým je veľkosť tohto poľa.
+Tretím argumentom je reťazec, ktorý sa bude nachádzať vždy medzi každými dvoma reťazcami,
+ktoré sa spoja. Ak bude tento argument `NULL`, tak sa reťazce spoja bez toho,
+že by sa medzi ne niečo pridávalo.
+
+== Bonus: Implementácia
+
+Tera,z keď už ste si vyskúšali dynamickú alokáciu, skúste si vybrať niektoré funkcie
+z minulých cvičení a skúsiť si ich prepísať pomocou dynamickej alokácie.
+
+Odporučil by som implementáciu funkcie `split`, táto funkcia sa vám bude ešte často krát hodiť.
+A pomocou nej napísať funkciu, ktorá vezme nejaký reťazec a nahradí v ňom všetky
+výskyty nejakého podreťazca iným podreťazcom.
+Obe funkcie sú implementované vo vzorovom riešení.
+
+== Zaujimave linky
+
+* link:http://stackoverflow.com/questions/1119134/how-do-malloc-and-free-work[ako funguje malloc a free]
+* link:http://stackoverflow.com/questions/1825964/c-c-maximum-stack-size-of-program[maximálna veľkosť zásobníka]
+* link:http://www.win.tue.nl/~aeb/linux/lk/lk-9.html#ss9.6[Overcommit and OOM]
+

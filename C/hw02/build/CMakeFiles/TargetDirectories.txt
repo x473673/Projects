@@ -1,0 +1,3 @@
+/home/x473673/pb071/hw02/build/CMakeFiles/edit_cache.dir
+/home/x473673/pb071/hw02/build/CMakeFiles/rebuild_cache.dir
+/home/x473673/pb071/hw02/build/CMakeFiles/poker.dir

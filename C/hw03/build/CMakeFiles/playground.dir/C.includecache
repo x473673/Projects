@@ -1,0 +1,36 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/x473673/pb071/hw03/dataDef.h
+stdbool.h
+-
+
+/home/x473673/pb071/hw03/memoryVM.h
+stdbool.h
+-
+
+/home/x473673/pb071/hw03/memoryVMObject.h
+stdbool.h
+-
+dataDef.h
+/home/x473673/pb071/hw03/dataDef.h
+
+/home/x473673/pb071/hw03/playground.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+dataDef.h
+/home/x473673/pb071/hw03/dataDef.h
+memoryVM.h
+/home/x473673/pb071/hw03/memoryVM.h
+memoryVMObject.h
+/home/x473673/pb071/hw03/memoryVMObject.h
+

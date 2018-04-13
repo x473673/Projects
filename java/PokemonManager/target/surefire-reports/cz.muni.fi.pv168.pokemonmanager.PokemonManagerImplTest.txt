@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: cz.muni.fi.pv168.pokemonmanager.PokemonManagerImplTest
+-------------------------------------------------------------------------------
+Tests run: 21, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.044 sec

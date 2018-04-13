@@ -1,0 +1,1 @@
+/usr/lib64/ccache/cc   -std=c99 -g -ggdb3 -Wall -Wextra -pedantic -Werror   CMakeFiles/tests.dir/hw01.c.o CMakeFiles/tests.dir/hw01_tests.c.o  -o tests -rdynamic 

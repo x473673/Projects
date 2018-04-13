@@ -1,0 +1,2 @@
+/usr/bin/ar qc libmvm.a  CMakeFiles/mvm.dir/memoryVM.c.o CMakeFiles/mvm.dir/memoryVMObject.c.o
+/usr/bin/ranlib libmvm.a

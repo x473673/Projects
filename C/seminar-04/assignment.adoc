@@ -1,0 +1,294 @@
+---
+title: "Cvičení 4: Reťazce, 1. časť"
+layout: "seminar"
+author: "Peter Stanko"
+author-email: "stanko@mail.muni.cz"
+publish: 1
+---
+
+= Cvičení 4: Reťazce, 1. časť
+
+== Úlohy
+
+[.alert.alert-warning]
+icon:exclamation-circle[role="mr-2"] Pri riešení nasledujúcich úloh __nepoužívajte__ funkcie z hlavičkového súboru `string.h`!
+
+=== Úloha 1. Funkcie na prácu s reťazcami
+V rámci prvej úlohy si naimplementujete základné funkcie na precvičenie práce s reťazcami. 
+Poviete si, „načo mi to je, keď všetky tieto základné funkcie nám ponúka štandardná knižnica?“
+Dôvod je ten, aby ste pochopili, ako dané funkcie pracujú a že ich princíp je jednoduchý.
+
+==== Funkcia `stringLength`
+Naimplementujte funkciu `stringLength`, ktorá zistí dĺžku zadaného reťazca. 
+Typ `size_t` je typ definovaný v hlavičkovom súbore `stddef.h`, ale ten zároveň
+používajú aj iné hlavičky, napríklad `stdlib.h`, `stdio.h` a `string.h`.
+
+_Všimnite si, predávame ukazateľ na konštantný reťazec._
+Funkcia nemení obsah reťazca. Vďaka tomu môže prekladač robiť rôzne optimalizácie
+a funkcia dokáže prijať aj reťazcovú konštantu alebo reťazec, ktorý sme si alokovali
+na zásobníku.
+
+[source,c]
+----
+size_t stringLength(const char *str);
+
+// example of use:
+stringLength("Hello world!"); // should return 12
+// Note: using just (char *) would cause a warning since
+// you are trying to pass to the function something that is constant, 
+// but it expects non constant
+----
+
+==== Funkcia `stringCopy`
+Naimplementujte funkciu `stringCopy`, ktorá skopíruje obsah druhého reťazca do prvého.
+
+[source,c]
+----
+char *stringCopy(char *result, const char *origin);
+// example of use:
+stringCopy(some_string, "Hello!"); // some_string will contain string "Hello"
+// Note here: result isn't const, you will change the memory where that pointer points to
+// you will copy characters from the original string there
+----
+
+==== Funkcia `stringCountChar`
+Naimplementujte funkciu `stringCountChar`,  ktorá spočíta počet výskytov znaku v reťazci.
+
+[source,c]
+----
+size_t stringCountChar(const char *string, char ch);
+
+//main:
+size_t countOfA = stringCountChar("abba123 a", 'a'); // will return 3
+----
+
+==== Funkcia `stringCompare`
+
+*Reťazce v jazyku C nie je možné porovnávať operátorom `==`.* Na porovnanie dvoch reťazcov
+je potrebné porovnať jednotlivé znaky na rovnakých pozíciach.
+
+Naimplementujte funkciu `stringCompare`, ktorá lexikograficky porovná zadané reťazce. 
+Ak sú rovnaké, vráti nulu, ak je prvý reťazec lexikograficky menší, vráti zápornú hodnotu, 
+inak vráti kladnú hodnotu.
+
+[source,c]
+----
+int stringCompare(const char *first, const char *second);
+----
+
+==== Funkcia `stringCompareN`
+Naimplementujte funkciu `stringCompareN`, 
+ktorá je podobná `stringCompare`. Táto funkcia ale bude
+porovnávať len prvých `n` znakov daných reťazcov.
+(Ak je `n` väčšie ako dĺžka samotných reťazcov, porovnáva len do dĺžky toho kratšieho.)
+
+[source,c]
+----
+int stringCompareN(const char *first, const char *second, size_t n);
+----
+
+---
+
+=== Úloha 2. Zložitejšie funkcie
+V tejto úlohe odporúčame využiť funkcie z predošlej úlohy. 
+
+==== Funkcia `stringCountSubstring`
+Naimplementujte funkciu `stringCountSubstring`, ktorá spočíta, 
+koľkokrát sa druhý podreťazec nachádza v prvom reťazci. 
+
+[source,c]
+----
+size_t stringCountSubstring(const char *original, const char *substring); 
+// Note: Try to use stringCompare to make it easier for you
+----
+
+==== Funkcia `stringFindChar`
+Naimplementujte funkciu `stringFindChar`, 
+ktorá vráti ukazateľ na prvý výskyt zadaného znaku. 
+Ak sa znak v reťazci nenachádza, vráti `NULL`.
+
+[source,c]
+----
+const char *stringFindChar(const char *original, const char ch);
+----
+
+==== Funkcia `stringFindSubstring`
+Naimplementujte funkciu `stringFindSubstring`, 
+ktorá vráti ukazateľ na prvý výskyt zadaného podreťazca. 
+Ak sa podreťazec nenachádza v reťazci, tak funkcia vráti `NULL`.
+
+[source,c]
+----
+const char *stringFindSubstring(const char *orig, const char *sub);
+----
+
+==== Funkcia `stringToUpper`
+Naimplementujte funkciu `stringToUpper`, 
+ktorá všetky malé písmená zadaného reťazca zmení na veľké. 
+Funkcia vráti ukazateľ na výsledný reťazec.
+
+[source,c]
+----
+char *stringToUpper(const char *origin, char *result);
+----
+
+==== Funkcia `stringToLower`
+Naimplementujte funkciu `stringToLower`, 
+ktorá všetky veľké písmená zadaného reťazca zmení na malé. 
+Funkcia vráti ukazateľ na výsledný reťazec.
+
+[source,c]
+----
+char *stringToLower(const char *origin, char *result);
+----
+
+== Bonusy
+
+Vypracovanie bonusov nie je povinné, 
+no skúste sa nad nimi zamyslieť a doma si ich vypracovať.
+Programovať sa najlepšie naučíte praxou!
+
+=== Bonus 1. Insert Sort
+
+V tejto úlohe si vyskúšate prácu s ukazateľmi na funkcie.
+
+==== Zadanie
+
+Naimplementujte Insert Sort, ktorý bude slúžiť na usporiadanie znakov v reťazci. 
+Ako prvý argument funkcia vezme samotný reťazec, druhým argumentom je *komparátor*.
+Komparátor je funkcia, ktorá vezme 2 argumenty a navzájom ich porovná. V prípade, 
+že sú zhodné, vráti 0; ak je prvý prvok väčší, vráti zápornú hodnotu; 
+inak vráti kladnú hodnotu.
+
+(`stringCompare` je príklad komparátora, ktorý porovnáva reťazce)
+
+*Predpis funkcie:*
+[source,c]
+----
+void stringInsertSort(char *string, int (*comparator)(char , char));
+----
+
+*Pseudokód:*
+
+[source]
+----
+A - vstupny retazec
+L - veľkosť poľa = stringLength(A)
+F - komparátor
+
+for i = 1 to L - 1
+    x = A[i]
+    j = i
+    while j > 0 and (F(A[j-1], A[i]) > 0)
+        A[j] = A[j-1]
+        j = j - 1
+    end while
+    A[j] = x
+ end for
+----
+
+Príklad komparátora:
+
+[source,c]
+----
+// simple comparator:
+int cmp(char a, char b)
+{
+    return a - b;
+}
+
+// Insert sort call
+stringInsertSort(string, cmp);
+
+// call of the comparator in insert sort
+...
+while (j > 0 && (cmp(array[j-1], array[i]) > 0))
+...
+----
+
+'''
+
+== Trocha teórie
+
+=== Motivácia
+
+V nasledujúcich 3 cvičeniach budete implementovať jednoduchú knižnicu na prácu s reťazcami.
+
+Na tomto cvičení budete pracovať so statickými reťazcami a ukazateľmi. 
+Reťazec je pole znakov, ktoré je ukončené nulovým znakom (bytom hodnoty `0`). 
+Tento znak je na koniec reťazcov pridávaný automaticky. 
+Treba dbať na to, aby ste mali alokované dostatočné množstvo pamäte. 
+_(Na reťazec dĺžky 20 znakov je potrebné 21 znakové pole.)_ 
+Vďaka nulovému bytu je možné ľahko zistiť, kde reťazec končí (dĺžka reťazca).
+
+V jazyku C sa nekontroluje pretečenie poľa: treba si dať pozor aby nedošlo k zápisu 
+alebo čítaniu mimo pridelenú pamäť.
+
+Na prednáške bolo vysvetlené, čo je ukazateľ: typ premennej, 
+ktorá uchováva adresu ukazujúcu do logického adresného priestoru aplikácie. 
+Vďaka nemu je možné k tejto pamäti pristupovať, čítať ju, prepisovať, 
+dokonca na danú adresu skočiť a začať vykonávať inštrukcie _(funkčný ukazateľ)_.
+
+
+=== Deklarácia poľa:
+
+[source,c]
+----
+int myIntArray[5] = {1, 2, 3, 4, 5};   // declaration with initialization 
+sizeof(myIntArray) == 5 * sizeof(int); // 5 * 4 = 20
+
+char my_string[] = "hello world!";
+// what is an array name (symbol) my_string? 
+printf("0x%08x\n", my_string); // it would address, but address of what ?
+printf("%c\n", *my_string);    // it would print 'h'
+----
+
+Pozorovanie: _Meno deklarovaného poľa (`my_string`), sa správa ako ukazateľ, obsahuje adresu prvého prvku poľa._
+
+Dereferencia: _Dereferencovaním mena poľa pristúpime k hodnote prvého prvku poľa._
+
+
+=== Zaujímavosť
+
+[source,c]
+----
+*pointer == pointer[0];      // this is equivalent
+// More general rule:
+*(pointer + i) == pointer[i] // i is an integer
+----
+
+Pozor, index síce môže byť negatívny, ale správa sa to inak ako v jazykoch typu Python. 
+*Nepoužívajte* preto záporné indexy, kým presne nerozumiete ukazateľovej aritmetike. 
+
+=== Na pozícii const záleží
+
+[source,c]
+----
+const char *string;        // Pointer to constant memory  (const string)
+char const * string;       // Same as above
+char * const string;       // Constant pointer to non-constant memory
+const char * const string; // Constant pointer to constant memory
+----
+
+*Konštatný ukazateľ* `char * const` je ukazateľ, priradená adresa sa po inicializácii už nedá meniť. 
+Hodnotu, ktorá sa na danej adrese nachádza, ale zmeniť môžeme.
+
+*Ukazateľ na konštantnú pamäť* `const char *` (prípadne iný typ miesto `char`) znamená, 
+že ukazateľ ukazuje na nemennú pamäť. Na adrese, ktorá je v ňom uložená, 
+sa može nachádzať kus pamäte, ktorý meniť nechceme alebo nemôžeme.
+
+Prvé dva prípady sú ekvivalentné kvôli tomu, že `const` sa viaže najprv zľava (ak je to možné).  
+Kedže sa v prvom prípade nemá na čo naviazať, naviaže sa to, čo je prvé napravo.
+
+Posledný prípad nehovorí nič iné než to, že nejde zmeniť ani adresa, na ktorú ukazuje ukazateľ, 
+ani pamäť na ktorú sa ukazuje.
+
+*Rada:* Používajte `const` všade tam, kde hodnotu nemeníte a meniť nebudete, najmä pri ukazateľoch. 
+
+==== Zaujímavé odkazy 
+* link:http://www.cplusplus.com/reference/cstring/[Referenčná príručka string.h]
+* link:http://www.cplusplus.com/reference/cstdlib/qsort/[Referenčná príručka qsort]
+* link:https://opensource.apple.com/source/xnu/xnu-1456.1.26/bsd/kern/qsort.c[Implementácia qsort]
+* link:https://github.com/antirez/sds[Simple Dynamic Strings] - malá ale zaujímavá knižnica pre prácu s reťazcami.
+* link:http://stackoverflow.com/questions/890535/what-is-the-difference-between-char-const-and-const-char[Konštantné ukazatele]
+

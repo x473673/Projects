@@ -1,0 +1,1 @@
+/usr/lib64/ccache/cc   -std=c99 -g -ggdb3 -Wall -Wextra -pedantic -Werror   CMakeFiles/spellcheck.dir/hw01.c.o CMakeFiles/spellcheck.dir/hw01_main.c.o  -o spellcheck -rdynamic 

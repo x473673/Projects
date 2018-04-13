@@ -1,0 +1,4 @@
+/home/x473673/pb071/hw01/build/CMakeFiles/edit_cache.dir
+/home/x473673/pb071/hw01/build/CMakeFiles/rebuild_cache.dir
+/home/x473673/pb071/hw01/build/CMakeFiles/spellcheck.dir
+/home/x473673/pb071/hw01/build/CMakeFiles/tests.dir

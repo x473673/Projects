@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/x473673/pb071/hw01/hw01.c
+hw01.h
+/home/x473673/pb071/hw01/hw01.h
+ctype.h
+-
+stdbool.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+
+/home/x473673/pb071/hw01/hw01.h
+stdbool.h
+-
+stdlib.h
+-
+
+/home/x473673/pb071/hw01/hw01_main.c
+ctype.h
+-
+stdbool.h
+-
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+hw01.h
+/home/x473673/pb071/hw01/hw01.h
+
